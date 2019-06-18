@@ -12,6 +12,11 @@ executors:
     docker:
       - image: "circleci/python:2.7"
 commands:
+  build_app:
+    description: "Construindo Aplicação"
+    steps:
+      - run: yarn build
+
   checkout_install:
     description: "Checkout Application Repository"
     steps:
@@ -45,7 +50,9 @@ jobs:
     executor: obah-web-deploy
     steps:
       - checkout_install
-      - run: yarn build
+      - run:
+          name: "Construindo Aplicação"
+          command: yarn build
       - aws-s3/sync:
           from: dist
           to: "s3://obah-web"
@@ -54,7 +61,7 @@ jobs:
             --cache-control "max-age=86400"
           overwrite: true
 workflows:
-  version: 2
+  version: 2.1
   test_build_deploy:
     jobs:
       - test
