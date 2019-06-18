@@ -1,13 +1,14 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
-jobs:
-  build:
+version: 2.1
+
+executors:
+  obah-web-executor:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
+
     working_directory: ~/repo
+commands:
+  checkout_install:
+    description: "Checkout Application Repository"
     steps:
       - checkout
       - restore_cache:
@@ -21,7 +22,38 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
+          
+jobs:
+  test:
+    executor: obah-web-executor
+    steps:
+      - checkout_install
       - run: yarn test
+
+  build:
+    executor: obah-web-executor
+    steps:
+      - checkout_install
+      - run: yarn build
+
+  deploy:
+    executor: obah-web-executor
+    steps:
+      - checkout_install
       - run: yarn build
       - run: yarn deploy
+
+workflows:
+  version: 2
+  test_build_deploy:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
