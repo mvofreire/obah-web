@@ -10,7 +10,7 @@
     "test:watch": "jest --watchAll",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "deploy": "netlify deploy --dir=./build -p -m \"$(git log -1 --pretty=%B)\""
+    "deploy": "netlify deploy --dir=./dist -p -m \"$(git log -1 --pretty=%B)\""
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
