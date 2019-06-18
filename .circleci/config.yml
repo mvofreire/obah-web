@@ -8,9 +8,6 @@ executors:
       - image: circleci/node:10
 
     working_directory: ~/repo
-  obah-web-deploy:
-    docker:
-      - image: "circleci/python:2.7"
 commands:
   build_app:
     description: "Construindo Aplicação"
@@ -47,7 +44,7 @@ jobs:
       - run: yarn build
 
   deploy:
-    executor: obah-web-deploy
+    executor: obah-web-executor
     steps:
       - checkout_install
       - run:
