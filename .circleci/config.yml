@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.0
 
 executors:
   obah-web-executor:
@@ -6,6 +8,9 @@ executors:
       - image: circleci/node:10
 
     working_directory: ~/repo
+  obah-web-deploy:
+    docker:
+      - image: "circleci/python:2.7"
 commands:
   checkout_install:
     description: "Checkout Application Repository"
@@ -22,7 +27,7 @@ commands:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-          
+
 jobs:
   test:
     executor: obah-web-executor
@@ -37,12 +42,17 @@ jobs:
       - run: yarn build
 
   deploy:
-    executor: obah-web-executor
+    executor: obah-web-deploy
     steps:
       - checkout_install
       - run: yarn build
-      - run: yarn deploy
-
+      - aws-s3/sync:
+          from: dist
+          to: "s3://obah-web"
+          arguments: |
+            --acl public-read \
+            --cache-control "max-age=86400"
+          overwrite: true
 workflows:
   version: 2
   test_build_deploy:
