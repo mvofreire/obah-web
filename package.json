@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "test": "jest --watchAll",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watchAll",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "deploy": "netlify deploy --dir=./build -p -m \"$(git log -1 --pretty=%B)\""
