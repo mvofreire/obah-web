@@ -52,8 +52,6 @@ class Application extends Component {
           <Route path="/admin" component={AuthenticatedPage} />
           <Redirect to="/home" />
         </Switch>
-
-        teste
       </AppContext.Provider>
     );
   }

@@ -1,6 +1,12 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const fs = require("fs");
+const lessToJs = require("less-vars-to-js");
+
+const themeVariables = lessToJs(
+  fs.readFileSync(path.join(__dirname, "./template/theme.less"), "utf8")
+);
 
 module.exports = {
   entry: {
@@ -15,7 +21,7 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         test: /node_modules/,
-        minSize: '50000',
+        minSize: "50000",
         name: "vendors"
       }
     }
@@ -24,7 +30,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules|dist|.storybook/,
+        exclude: /node_modules/,
         use: {
           loader: "babel-loader"
         }
@@ -43,15 +49,17 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: "less-loader", // compiles Less to CSS
-        options: {
-          modifyVars: {
-            "primary-color": "red",
-            "link-color": "blue",
-            "border-radius-base": "2px"
-          },
-          javascriptEnabled: true
-        }
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          {
+            loader: "less-loader",
+            options: {
+              modifyVars: themeVariables,
+              javascriptEnabled: true
+            }
+          }
+        ]
       }
     ]
   },
@@ -73,8 +81,13 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebPackPlugin({
+      title: "Obah",
       template: "./template/index.html",
-      filename: "./index.html"
+      filename: "./index.html",
+      meta: {
+        viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
+        "theme-color": "#4285f4"
+      }
     })
   ]
 };

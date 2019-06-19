@@ -14,12 +14,10 @@ class Login extends PureComponent {
   };
 
   requestAuthentication = async credentials => {
-    const { setUserSession, history, session } = this.props;
+    const { setUserSession, history } = this.props;
     try {
       const data = await doLogin(credentials);
       setUserSession(data);
-
-      console.log(session);
       history.push("/admin/dashboard");
     } catch (error) {
       console.log(error);
@@ -73,6 +71,7 @@ class Login extends PureComponent {
               <a className="login-form-forgot" href="">
                 Forgot password
               </a>
+              <br />
               <Button
                 type="primary"
                 htmlType="submit"
